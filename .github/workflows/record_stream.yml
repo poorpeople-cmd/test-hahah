@@ -1,7 +1,13 @@
 name: Record Live Stream with FFmpeg
 
 on:
-  workflow_dispatch: # Yeh aapko GitHub ke 'Actions' tab se manual run karne ki permission dega
+  workflow_dispatch:
+    inputs:
+      # Yeh wo input box hai jo run karte waqt show hoga
+      ffmpeg_command:
+        description: 'Apni puri FFmpeg command yahan paste karein (e.g., ffmpeg -i link -c copy output.ts)'
+        required: true
+        type: string
 
 jobs:
   record-stream:
@@ -16,14 +22,18 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ffmpeg
 
-      - name: Run FFmpeg Command
-        # Aapki di hui command yahan run ho rahi hai
+      - name: Run Custom FFmpeg Command
+        # Yahan tumhari di hui command run hogi
         run: |
-          ffmpeg -headers "Referer: https://ppdd18.plaifrdcikf.shop/live.html?_pa=bWF0Y2hJZD0yODcxNzk0Jm10VGV4dD1mb290YmFsbCZzaXRlS2V5PThmdWJvJnNrcHROdW09M3Jk&_pb=1" -user_agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" -i "https://xxyznt1-cf.didjhfyu8yg.sbs/auth%3D780fdd6c254617b9351bdfd195c04d294c7557499ddbd858512d0923fdddd3c60f8b3c660b3c89fa400d3e6462c07abf701af8c5cc3a399cee5121945b94fb063e60c7f23138414d336b5702a8e5ca3481981b26e914351a1cec2c9a97d794443f7737323d35b1af0afa5f36f9b355469bb0fb395ec9f584cf7bbf8f5659adefbee7b1bd267d813b28d0f7c28710a54b78629170d7d32ba652d3ebe53eecabe7%26cid%3DLfG-DIPusniBlBY331fSc260418%26_v%3D2%26_r%3DjoxXHG%26_vis%3D7cc4099e3b3b6af0b36f87a219cc2b290ede07f3923eb2ba850719a0b9639f30%26_vvs%3D873fa633f3e2c58994ce47ec7fb7bed3ffeac39c755057efa8db1a257a4b7e78%26_vas%3Dbc5e77ac748fe6a0194424109104571b591f05ae781867cc2385fb25819c77ee/app/c417448.m3u8" -c copy live_recording.ts
+          ${{ inputs.ffmpeg_command }}
 
       - name: Upload Recording
-        # Yeh step recording ko save karke aapko download link dega
         uses: actions/upload-artifact@v4
         with:
           name: live_video_recording
-          path: live_recording.ts
+          # Maine yahan wildcards (*.ts, *.mp4) laga diye hain.
+          # Tum output ka naam jo bhi rakho, bas extension .ts ya .mp4 honi chahiye.
+          path: |
+            *.ts
+            *.mp4
+            *.mkv
