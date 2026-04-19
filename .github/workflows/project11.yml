@@ -1,3 +1,4 @@
+
 name: Project 11 - Direct FFmpeg Streamer
 
 on:
@@ -13,8 +14,12 @@ on:
           - '3'
           - '4'
         default: '1'
-      ffmpeg_command:
-        description: 'Apni puri FFmpeg command yahan paste karein'
+      m3u8_url:
+        description: 'Sirf Direct M3U8 Link yahan paste karein'
+        required: true
+        type: string
+      referer_url:
+        description: 'Referer Link (e.g., https://streams.center/embed/...)'
         required: true
         type: string
 
@@ -37,9 +42,58 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ffmpeg
 
-      - name: Run Magic Cleaner & Streamer
+      - name: Run Magic Streamer
         env:
           STREAM_ID: ${{ inputs.stream_id }}
-          FFMPEG_CMD: ${{ inputs.ffmpeg_command }}
-        # Sirf node command, kyunke koi browser nahi hai toh xvfb-run ki bhi zaroorat nahi
+          M3U8_URL: ${{ inputs.m3u8_url }}
+          REFERER_URL: ${{ inputs.referer_url }}
         run: node runner.js
+# // =============== yeh 100% teek hai, bas ooper eek new input dalty hai taakey direct m3u8 link and reffer de skoo afar full ffpmeg command n hu tuu ==========================
+
+
+
+# name: Project 11 - Direct FFmpeg Streamer
+
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       stream_id:
+#         description: 'Select OK.ru Stream Server ID (1, 2, 3, or 4)'
+#         required: true
+#         type: choice
+#         options:
+#           - '1'
+#           - '2'
+#           - '3'
+#           - '4'
+#         default: '1'
+#       ffmpeg_command:
+#         description: 'Apni puri FFmpeg command yahan paste karein'
+#         required: true
+#         type: string
+
+# jobs:
+#   record-stream:
+#     runs-on: ubuntu-latest
+#     timeout-minutes: 360 # 6 Ghante ki limit
+
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: '20'
+
+#       - name: Install FFmpeg
+#         run: |
+#           sudo apt-get update
+#           sudo apt-get install -y ffmpeg
+
+#       - name: Run Magic Cleaner & Streamer
+#         env:
+#           STREAM_ID: ${{ inputs.stream_id }}
+#           FFMPEG_CMD: ${{ inputs.ffmpeg_command }}
+#         # Sirf node command, kyunke koi browser nahi hai toh xvfb-run ki bhi zaroorat nahi
+#         run: node runner.js
